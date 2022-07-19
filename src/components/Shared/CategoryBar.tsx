@@ -1,41 +1,30 @@
 import { Box, HStack, Pressable, ScrollView, Text } from "native-base";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet } from "react-native";
 import ICategory from "../../models/ICategory";
 import CategoryButton from "./CategoryButton";
 
 interface IProps {
     categories: ICategory[];
-    onCategorySelect: () => void;
 }
 
 const CategoryBar: React.FC<IProps> = ({
     categories
 }) => {
 
-    const [isSelected, setIsSelected] = useState(false);
-
-    const onPress = () => {
-        setIsSelected(!isSelected)
-    }
-
     return (
-        <Pressable
-            onPress={() => onPress()}
+        <ScrollView
+            horizontal
         >
-            <ScrollView
-                horizontal
-            >
-                <CategoryButton category={{
-                    id: 0,
-                    name: "All",
-                    createdAt: new Date()
-                }} />
-                {categories.map((category) => (
-                    <CategoryButton category={category} />
-                ))}
-            </ScrollView>
-        </Pressable>
+            <CategoryButton category={{
+                id: 0,
+                name: "All",
+                createdAt: new Date()
+            }} />
+            {categories.map((category) => (
+                <CategoryButton key={category.id} category={category} />
+            ))}
+        </ScrollView>
     )
 }
 

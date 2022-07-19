@@ -1,5 +1,5 @@
 import axios from "axios"
-import IProduct from "../models/IProduct"
+import IProduct from "../models/Product"
 
 class ProductService {
 
@@ -16,7 +16,7 @@ class ProductService {
     }
 
     post = async (product: IProduct) => {
-        const response = await axios.post(`https://62286b649fd6174ca82321f1.mockapi.io/case-study/products`, { product });
+        const response = await axios.post(`https://62286b649fd6174ca82321f1.mockapi.io/case-study/products`, product);
 
         return response.data;
     }

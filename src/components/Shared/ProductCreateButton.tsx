@@ -1,10 +1,18 @@
-import { Button, Text, Pressable } from "native-base";
+import { Button, Text, Pressable, Box } from "native-base";
 import { StyleSheet } from "react-native"
 
-const ProductCreateButton = () => {
+interface IProps {
+    onPress: () => void
+}
+
+const ProductCreateButton: React.FC<IProps> = ({
+    onPress
+}) => {
     return (
+
         <Pressable
             style={styles.container}
+            onPress={onPress}
         >
             <Text fontSize={25}>+</Text>
         </Pressable>
@@ -13,6 +21,7 @@ const ProductCreateButton = () => {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         width: 40,
         height: 40,
         borderRadius: 40,
@@ -23,7 +32,7 @@ const styles = StyleSheet.create({
         right: 10,
         alignItems: "center",
         justifyContent: "center",
-        elevation: 10
+        backgroundColor: "#fff"
     }
 })
 

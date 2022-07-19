@@ -1,7 +1,9 @@
 import { Box, Pressable, Text } from "native-base";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import ICategory from "../../models/ICategory";
+import { MainContext } from "../../contexts/context";
+
+import ICategory, { CategoryContextType } from "../../models/ICategory";
 
 
 interface IProps {
@@ -11,21 +13,16 @@ interface IProps {
 const CategoryButton: React.FC<IProps> = ({
     category
 }) => {
-
-    const [isSelected, setIsSelected] = useState(false);
-
-    const onPress = () => {
-        setIsSelected(!isSelected)
-    }
+    const { selectedCategory, updateSelectedCategory } = useContext(MainContext) as CategoryContextType
 
     return (
         <Pressable
-            onPress={() => onPress()}
+            onPress={() => updateSelectedCategory(category.name)}
         >
             <Box
-                style={[styles.container, isSelected ? styles.selectedContainer : {}]}
+                style={[styles.container, selectedCategory == category.name ? styles.selectedContainer : {}]}
             >
-                <Text style={[styles.text, isSelected ? styles.selectedText : {}]} >{category.name}</Text>
+                <Text style={[styles.text, selectedCategory == category.name ? styles.selectedText : {}]} >{category.name}</Text>
             </Box>
         </Pressable>
     )

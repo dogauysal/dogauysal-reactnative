@@ -1,7 +1,7 @@
 import { AspectRatio, Box, Center, Text, Heading, Image, Stack, HStack, VStack, Button } from "native-base";
 import { background } from "native-base/lib/typescript/theme/styled-system";
 import React from "react";
-import IProduct from "../../models/IProduct";
+import IProduct from "../../models/Product";
 
 interface IProps {
     product: IProduct;
@@ -12,8 +12,8 @@ const ProductCard: React.FC<IProps> = ({
 }) => {
 
     return (
-        <Box margin={2}>
-            <Box rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" >
+        <Box margin={2} >
+            <Box rounded="lg" borderColor="coolGray.200" borderWidth="1" >
                 <Center>
                     <AspectRatio w="100%" >
                         <Image source={{

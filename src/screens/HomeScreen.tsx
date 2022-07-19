@@ -1,11 +1,15 @@
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Box, FlatList, Flex, HStack } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import { Box, FlatList, Flex, HStack, Pressable, Stack } from 'native-base';
+import React, { useContext, useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import ProductCard from '../components/Product/ProductCard';
 import CategoryBar from '../components/Shared/CategoryBar';
 import ProductCreateButton from '../components/Shared/ProductCreateButton';
-import ICategory from '../models/ICategory';
-import IProduct from '../models/IProduct';
+import { MainContext } from '../contexts/context';
+
+import ICategory, { CategoryContextType } from '../models/ICategory';
+import IProduct from '../models/Product';
 import { HomeParamList } from '../navigation/Types';
 import CategoryService from '../services/CategoryService';
 import ProductService from '../services/ProductService';
@@ -16,28 +20,36 @@ const HomeScreen = ({
     navigation,
     route
 }: HomeScreenNavigationProp) => {
+    const isFocused = useIsFocused();
 
-    const [categories, setCategories] = useState<ICategory[]>([]);
-    const [selectedCategoryName, setSelectedCategoryName] = useState();
+
+    const { selectedCategory, updateSelectedCategory, categories, updateCategories } = useContext(MainContext) as CategoryContextType
+
     const [products, setProducts] = useState<IProduct[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 
     useEffect(() => {
         fetchCategories();
         fetchProducts();
-    }, [])
+    }, [isFocused])
 
     useEffect(() => {
-        let _products = [...products];
 
-        _products = _products.filter(p => p.category == selectedCategoryName);
+        if (selectedCategory == "All") {
+            setFilteredProducts(products)
+        } else {
+            let _products = [...products];
 
-        setFilteredProducts(_products)
+            _products = _products.filter(p => p.category == selectedCategory);
 
-    }, [selectedCategoryName])
+            setFilteredProducts(_products)
+        }
+
+    }, [selectedCategory])
+
 
     const fetchCategories = async () => {
-        await CategoryService.getAll().then(res => setCategories(res));
+        await CategoryService.getAll().then(res => updateCategories(res));
     }
 
     const fetchProducts = async () => {
@@ -49,29 +61,45 @@ const HomeScreen = ({
 
     const renderItem = (product: IProduct) => {
         return (
-            <Box flex={0.5}>
+            <Pressable
+                key={product.id}
+                flex={0.5}
+                onPress={() => navigation.navigate("ProductDetail", {
+                    id: product.id
+                })}>
                 <ProductCard product={product} />
-            </Box>
-
+            </Pressable >
         )
     }
 
-
+    const onProductCreatePress = () => {
+        navigation.navigate("CreateProduct")
+    }
 
     return (
-        <Box w="100%" flex={1} position={"relative"}>
-            <CategoryBar categories={categories} onCategorySelect={() => console.log("")} />
-            <FlatList
-                data={filteredProducts}
-                renderItem={({ item }) => renderItem(item)}
-                numColumns={2}
+        <>
+            <Stack style={styles.container}>
+                <CategoryBar categories={categories} />
+                <FlatList
+                    data={filteredProducts}
+                    renderItem={({ item }) => renderItem(item)}
+                    numColumns={2}
+                    keyExtractor={(item, i) => `k_${item.id}`}
+                />
+                <ProductCreateButton onPress={() => onProductCreatePress()} />
+            </Stack>
 
-            />
-            <ProductCreateButton />
-        </Box>
-
+        </>
 
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        width: "100%",
+        flex: 1,
+        padding: 5
+    }
+})
 
 export default HomeScreen;
